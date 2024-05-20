@@ -1,0 +1,36 @@
+.game-box {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.game-box img {
+  max-width: 100%;
+  height: auto;
+}
+
+.game-box h3 {
+  margin-top: 8px;
+}
+
+.game-box p {
+  margin-top: 4px;
+}
+
+.container {
+  padding: 20px;
+}
+
+.gameGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
