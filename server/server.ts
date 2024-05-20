@@ -1,7 +1,11 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import { db } from './config/db.config';
+import userRouter from './src/user.route';
+import gameRouter from './src/game.route';
+import charRouter from './src/character.route';
 
-const app: Application = express();
+const app = express();
 
 const PORT: number = parseInt(process.env.PORT || '8001', 10);
 
@@ -12,12 +16,20 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+
 app.use(cors());
 
-app.get('/characters', (req: Request, res: Response) => {
-  res.json({ message: 'Hello from the server!' });
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+app.use('/users', userRouter);
+app.use('/games', gameRouter);
+app.use('/characters', charRouter);
+
+db.then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}).catch((err) => {
+  console.error(err);
 });
