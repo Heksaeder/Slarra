@@ -1,32 +1,48 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+import Joi from 'joi';
 
-enum UserRole {
-  Admin = 'admin',
-  User = 'user'
-}
+const validRoles = [
+  'admin',
+  'user'
+];
 
-interface IUser extends Document {
-  id: string;
-  username: string;
-  password: string;
-  email: string;
-  role: UserRole;
-  created_at: Date;
-  updated_at: Date;
-  verified: boolean;
-}
-
-const UserSchema: Schema = new Schema({
-  id: { type: String, required: true },
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  email: { type: String, required: true },
-  role: { type: String, enum: Object.values(UserRole), required: true },
-  created_at: { type: Date, required: true },
-  updated_at: { type: Date, required: true },
-  verified: { type: Boolean, required: true }
+export const userValidate = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+  role: Joi.string().valid(...validRoles).default('user')
 });
 
-const UserModel = mongoose.model<IUser>('User', UserSchema);
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  bio:string;
+  role: string;
+}
 
-export default UserModel;
+const userSchema = new Schema<IUser>({
+  name: { 
+    type: String, 
+    required: true 
+  },
+  email: { 
+    type: String, 
+    required: true 
+  },
+  password: { 
+    type: String, 
+    required: true 
+  },
+  bio: { 
+    type: String, 
+    required: false 
+  },
+  role: { 
+    type: String, 
+    enum: validRoles, 
+    default: 'user' 
+  }
+});
+
+export const User = model<IUser>('User', userSchema);
