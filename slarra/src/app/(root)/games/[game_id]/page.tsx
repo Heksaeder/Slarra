@@ -1,15 +1,31 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { useUpdateGameMutation, useDeleteGameMutation } from '@/app/services/games'
-import { useFetchGameQuery } from '@/app/services/games'
+import Modal from 'react-modal'
+
+import { IoPencil } from "react-icons/io5";
+import { RxCross2 } from 'react-icons/rx'
+import { IoIosAddCircleOutline } from "react-icons/io";
+
+import TopicsList from './components/TopicsList'
+import AddTopicForm from './components/AddTopicForm'
 import EditGameForm from './components/EditGameForm'
 import CharacterList from './components/CharactersList'
 import AddCharacterForm from './components/AddCharForm'
-import { useCharacter, useCreateCharacterMutation } from '@/app/services/characters'
+
+import { useUpdateGameMutation, useDeleteGameMutation, useFetchGameQuery } from '@/app/services/games'
+import { useCreateCharacterMutation } from '@/app/services/characters'
+import { useCreateTopicMutation, useUpdateTopicMutation } from '@/app/services/topics'
+
+import './styles.css'
+
 
 const GamePage = () => {
-
   const [gameId, setGameId] = useState('')
+  const [isEditModal, setIsEditModal] = useState(false)
+  const [isDeleteModal, setIsDeleteModal] = useState(false)
+  const [isAddCharModal, setIsAddCharModal] = useState(false)
+  const [isAddTopicModal, setIsAddTopicModal] = useState(false) 
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const gameId = window.location.pathname.split('/')[2];
@@ -18,10 +34,11 @@ const GamePage = () => {
   }, [])
 
   const { data: game, isLoading, isError } = useFetchGameQuery(gameId);
-  const [showModal, setShowModal] = useState(false);
 
   const updateGameMutation = useUpdateGameMutation(); // Use the mutation hook
   const deleteMutation = useDeleteGameMutation(); // Use the mutation hook
+  const addCharMutation = useCreateCharacterMutation(); // Use the mutation hook
+  const addTopicMutation = useCreateTopicMutation(); // Use the mutation hook
 
   const handleUpdateGame = async (updatedGameData: { id: string, title: string; image: string; description: string }) => {
     try {
@@ -43,52 +60,101 @@ const GamePage = () => {
     }
   };
 
-  const addCharMutation = useCreateCharacterMutation(); // Use the mutation hook
-
   const handleAddChar = async (charData: { name: string; image: string; background: string; gameId:string}) => {
     try {
-      console.log('Adding character:', charData);
       await addCharMutation.mutateAsync(charData); // Pass charData directly
-      console.log('Character added successfully');
     } catch (error) {
       console.error('Error adding character:', error);
     }
   };
 
+  const handleAddTopic = async (topicData: { title: string; body: string; gameId: string }) => {
+    try {
+      await addTopicMutation.mutateAsync(topicData); // Pass topicData directly
+      console.log('Topic added successfully', topicData);
+    } catch (error) {
+      console.error('Error adding topic:', error);
+    }
+  };
+
+
+  if (isLoading) return <div> </div>; // Show loading state
+  if (isError) return <div> </div>; // Show error state
+  
   return (
     <div>
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>Error</p>}
       {game && (
         <div>
-          {/* Display characters list */}
-          <CharacterList gameId={gameId} />
-          <h1>{game.title}</h1>
-          <img src={game.image} alt={game.title} />
-          <p>{game.description}</p>
-
-          {/* Include EditGameForm component */}
-          <h2>Edit Game</h2>
-          <EditGameForm gameData={game} onSubmit={handleUpdateGame}/>
-
-          <h2>Characters</h2>
-          <AddCharacterForm gameId={gameId} onSubmit={handleAddChar} />
-
-          {/* Button to trigger deletion */}
-      <button onClick={() => setShowModal(true)}>Delete Game</button>
-      {/* Modal for confirmation */}
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete this game?</p>
-            <div>
-              <button onClick={handleDeleteGame}>Yes, Delete</button>
-              <button onClick={() => setShowModal(false)}>Cancel</button>
+          <div className='game-header'>
+            <div className='game-img' style={{backgroundImage:`url(${game.image})`}}>
+              <h1>{game.title}</h1>
+              <p className='game-desc'>
+                <div className='game-buttons'>
+                  <button onClick={() => setIsEditModal(true)}><IoPencil/></button>
+                  <button onClick={() => setIsDeleteModal(true)}><RxCross2/></button>
+                </div>
+              {game.description}</p>
             </div>
           </div>
-        </div>
-      )}
+
+          {/* Modal for editing game */}
+          <Modal
+            isOpen={isEditModal}
+            onRequestClose={() => setIsEditModal(false)}
+            overlayClassName={'overlay-modal'}
+            contentLabel="Edit Game"
+            className="modal"
+          >
+            <EditGameForm gameData={game} onSubmit={handleUpdateGame} />
+          </Modal>
+            
+          {/* Modal for deleting game */}
+          <Modal
+            isOpen={isDeleteModal}
+            onRequestClose={() => setIsDeleteModal(false)}
+            overlayClassName={'overlay-modal'}
+            contentLabel="Delete Game"
+            className="modal"
+          >
+            <div>
+              <h2>Are you sure you want to delete this game?</h2>
+              <button onClick={handleDeleteGame}>Yes</button>
+              <button onClick={() => setIsDeleteModal(false)}>No</button>
+            </div>
+          </Modal>
+
+          {/* Display characters list */}
+          <CharacterList gameId={gameId} />
+
+          {/* Add character button */}
+          <button className='add-char-button' onClick={() => setIsAddCharModal(true)}><IoIosAddCircleOutline/></button>
+          {/* Add character modal */}
+          <Modal
+            isOpen={isAddCharModal}
+            onRequestClose={() => setIsAddCharModal(false)}
+            overlayClassName={'overlay-modal'}
+            contentLabel="Add Character"
+            className="modal"
+          >
+            <AddCharacterForm gameId={gameId} onSubmit={handleAddChar} />
+          </Modal>
+
+          {/* Display topics */}
+          <TopicsList gameId={gameId} />
+
+          {/* Add topic button */}
+          <button className='add-char-button' onClick={() => setIsAddTopicModal(true)}><IoIosAddCircleOutline/></button>
+          {/* Add topic modal */}
+          <Modal
+            isOpen={isAddTopicModal}
+            onRequestClose={() => setIsAddTopicModal(false)}
+            overlayClassName={'overlay-modal'}
+            contentLabel="Add Topic"
+            className="modal"
+          >
+            <AddTopicForm gameId={gameId} onSubmit={handleAddTopic}/>
+          </Modal>
+          
         </div>
       )}
     </div>

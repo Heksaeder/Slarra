@@ -3,9 +3,10 @@ import { sanitizeInput } from '@/app/lib/purify';
 
 interface AddGameFormProps {
   onSubmit: (gameData: { title: string; image: string; description: string }) => void;
+  onClose: () => void;
 }
 
-const AddGameForm: React.FC<AddGameFormProps> = ({ onSubmit }) => {
+const AddGameForm: React.FC<AddGameFormProps> = ({ onSubmit, onClose }) => {
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [description, setDescription] = useState('');
@@ -16,6 +17,7 @@ const AddGameForm: React.FC<AddGameFormProps> = ({ onSubmit }) => {
     const sanitizedImage = sanitizeInput(image);
     const sanitizedDescription = sanitizeInput(description);
     onSubmit({ title:sanitizedTitle, image:sanitizedImage, description:sanitizedDescription});
+    onClose();
   };
 
   return (

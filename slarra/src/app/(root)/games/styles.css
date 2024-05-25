@@ -1,14 +1,22 @@
 .game-box {
-  border: 1px solid #ddd;
-  padding: 16px;
-  margin: 16px;
-  border-radius: 8px;
+  border:rgb(52, 52, 52) 1px solid;
+  padding:16px;
   text-align: center;
+  width:calc(100vw/3 - 32px);
+  height:calc(100vh/2 - 32px);
 }
 
 .game-box img {
   max-width: 100%;
   height: auto;
+}
+
+.game-box .img-box {
+  height:50%;
+  width:100%;
+  background-color:rgb(52, 52, 52);
+  background-size: cover;
+  background-position: center;
 }
 
 .game-box h3 {
@@ -17,6 +25,10 @@
 
 .game-box p {
   margin-top: 4px;
+  font-size: 12px;
+  overflow-y:auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(52, 52, 52) rgb(52, 52, 52);
 }
 
 .container {

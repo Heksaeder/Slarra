@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useMutation } from "react-query";
-import axiosConfig from "../../../lib/axios.config";
 import { useRegisterMutation } from "../../../services/users";
 
 const CreateUserForm = () => {

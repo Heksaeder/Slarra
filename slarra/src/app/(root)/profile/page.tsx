@@ -1,15 +1,15 @@
 'use client'
-import { useFetchUserQuery } from '../../services/users';
-import { getUserIdFromToken } from '../../services/auth';
-import UpdateForm from './components/UpdateForm';
-import { useUpdateMutation, useDeleteMutation } from '../../services/users';
-import { useState } from 'react';
+import { getUserIdFromToken } from "@/app/services/auth";
+import { useDeleteMutation, useFetchUserQuery, useUpdateMutation } from "@/app/services/users";
+import UpdateForm from "./components/UpdateForm";
 
 const Profile = () => {
-  const id = getUserIdFromToken() || ''; // Get user ID from token, default to empty string if null
+
+  const id = getUserIdFromToken() || '';
 
   const { data: userData, isLoading, isError } = useFetchUserQuery(id); // Fetch user data
-  const [showModal, setShowModal] = useState(false);
+
+
 
   const updateUserMutation = useUpdateMutation(); // Use the mutation hook
   const deleteMutation = useDeleteMutation(); // Use the mutation hook
@@ -33,19 +33,13 @@ const Profile = () => {
       console.error('Error deleting user:', error);
     }
   };
+
+  if (isLoading) return <div> </div>; // Show loading state
+  if (isError) return <div> </div>; // Show error state
   
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error fetching user data</div>;
-  }
-
   return (
     <div>
       <h1>User Details</h1>
-      <p>ID: {userData._id}</p>
       <p>Name: {userData.name}</p>
       <p>Email: {userData.email}</p>
       <p>Bio: {userData.bio}</p>
@@ -53,22 +47,9 @@ const Profile = () => {
       <br />
       <h1>Update User</h1>
       <UpdateForm userData={userData} onSubmit={handleUpdateUser} />
+      <br />
 
-      {/* Button to trigger deletion */}
-      <button onClick={() => setShowModal(true)}>Delete Account</button>
-      {/* Modal for confirmation */}
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete your account?</p>
-            <div>
-              <button onClick={handleDeleteUser}>Yes, Delete</button>
-              <button onClick={() => setShowModal(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <button onClick={handleDeleteUser}>Delete Account</button>
     </div>
   );
 };

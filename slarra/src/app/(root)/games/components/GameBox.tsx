@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface GameBoxProps {
   game: {
@@ -13,9 +13,11 @@ interface GameBoxProps {
 const GameBox: React.FC<GameBoxProps> = ({ game }) => {
   return (
     <div className="game-box">
-      <img src={game.image} alt={game.title} />
-      <h3>{game.title}</h3>
-      <p>{game.description}</p>
+      <Link href={`/games/${game._id}`} key={game._id}>
+        <div className='img-box' style={{ backgroundImage: `url(${game.image})` }}></div>
+        <h3>{game.title}</h3>
+      </Link>
+      <p dangerouslySetInnerHTML={{__html:game.description}}></p>
     </div>
   );
 };

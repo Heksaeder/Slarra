@@ -21,7 +21,6 @@ const EditCharacterForm: React.FC<EditCharFormProps> = ({ charData, onSubmit}) =
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Submitting updated game data:', updatedCharacter);
     onSubmit(updatedCharacter);
   }
 

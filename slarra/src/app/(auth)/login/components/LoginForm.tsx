@@ -1,8 +1,5 @@
-import { useState } from "react";
-import { useMutation } from "react-query";
-import axiosConfig from "../../../lib/axios.config";
+import { useContext, useState } from "react";
 import { useLoginMutation } from "../../../services/users";
-import Cookies from 'js-cookie';
 
 const LoginForm = () => {
 
@@ -18,9 +15,7 @@ const LoginForm = () => {
     }))
   }
 
-  const handleSubmit = (e: any) => {
-
-
+  const handleSubmit = (e: any) => {;
     e.preventDefault();
     loginMutation.mutate(formData, {
       onSuccess: () => {
@@ -35,7 +30,7 @@ const LoginForm = () => {
   return (
     <form method="POST" onSubmit={handleSubmit}>
       <input type="email" name="email" value={formData.email} placeholder="Email" onChange={handleChange} /><br />
-      <input type="password" name="password" value={formData.password} placeholder="Password" onChange={handleChange} /><br />
+      <input type="password" name="password" value={formData.password} placeholder="Password" onChange={handleChange} autoComplete="current-password" /><br />
       <button type="submit" disabled={loginMutation.isLoading}>
         {loginMutation.isLoading ? 'Logging in...' : 'Login'}
       </button>

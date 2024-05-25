@@ -1,11 +1,13 @@
-import { logout } from '@/app/services/auth';
+import { useLogoutMutation } from '@/app/services/users';
 import Link from 'next/link';
 import React from 'react'
 
 const LogoutBtn = () => {
+
+  const logoutMutation = useLogoutMutation();
   const handleLogout = async () => {
     try {
-      await logout();
+      logoutMutation.mutateAsync();
     } catch (error) {
       console.error(error);
     }

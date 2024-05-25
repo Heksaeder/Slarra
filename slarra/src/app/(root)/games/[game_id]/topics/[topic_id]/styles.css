@@ -1,0 +1,8 @@
+.message-body button {
+  width:100px;
+}
+
+.zoomed-avatar {
+  background-size: 250%;
+  background-position: 50% 50%;
+}
