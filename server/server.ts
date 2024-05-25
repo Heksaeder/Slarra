@@ -9,7 +9,7 @@ import messageRouter from './src/messages/message.route';
 
 const app = express();
 
-const PORT: number = parseInt(process.env.PORT || '8001', 10);
+const PORT: number = parseInt(process.env.PORT || '443', 10);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -19,6 +19,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(cors());
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
