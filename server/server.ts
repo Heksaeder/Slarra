@@ -39,7 +39,7 @@ app.use('/characters', charRouter);
 app.use('/topics', topicRouter);
 app.use('/posts', messageRouter);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/slarra', (req: Request, res: Response) => {
   res.send('Hello World');
 });
 
