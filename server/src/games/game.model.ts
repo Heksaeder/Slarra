@@ -17,7 +17,7 @@ class GameClass {
 export const gameValidate = Joi.object({
   title: Joi.string().max(50).required(),
   image: Joi.string().uri().optional(),
-  description: Joi.string().max(300).optional()
+  description: Joi.string().optional()
 });
 
 export interface IGame extends Document {
@@ -35,8 +35,7 @@ const gameSchema = new Schema<IGame>({
     type: String
   },
   description: { 
-    type: String, 
-    required: false 
+    type: String
   }
 });
 

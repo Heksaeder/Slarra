@@ -2,7 +2,7 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { CharacterController } from './character.ctrl'; // Fix: Import CharacterController explicitly
-import authMiddleware from './auth.middleware';
+import { checkToken } from '../utils/auth.middleware';
 
 const router = express.Router({ mergeParams: true});
 
@@ -17,7 +17,7 @@ const validateCharacter = [
 
 // Route to create a character
 // Route to create a character
-router.post('/new', authMiddleware, validateCharacter, (req:any, res:any) => {
+router.post('/new', checkToken, validateCharacter, (req:any, res:any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -25,10 +25,10 @@ router.post('/new', authMiddleware, validateCharacter, (req:any, res:any) => {
   CharacterController.createCharacter(req, res);
 });
 
-router.get('/all', authMiddleware, CharacterController.getCharactersByGame);
-router.get('/:id', authMiddleware, CharacterController.getCharacterById);
+router.get('/all', checkToken, CharacterController.getCharactersByGame);
+router.get('/:id', checkToken, CharacterController.getCharacterById);
 
-router.put('/:id', authMiddleware, validateCharacter, (req:any, res:any) => {
+router.put('/:id', checkToken, validateCharacter, (req:any, res:any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -36,6 +36,6 @@ router.put('/:id', authMiddleware, validateCharacter, (req:any, res:any) => {
   CharacterController.updateCharacter(req, res);
 });
 
-router.delete('/:id', authMiddleware, CharacterController.deleteCharacter);
+router.delete('/:id', checkToken, CharacterController.deleteCharacter);
 
 export default router;

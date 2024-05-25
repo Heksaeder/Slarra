@@ -1,8 +1,9 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { GameController } from './game.ctrl';
-import authMiddleware from './auth.middleware';
-import characterRoutes from './character.route';
+import { checkToken } from '../utils/auth.middleware';
+import characterRoutes from '../characters/character.route';
+import topicRoutes from '../topics/topic.route';
 const gameRouter = express.Router();
 
 // Validation and sanitization middlewares
@@ -12,7 +13,7 @@ const validateGame = [
   body('image').optional().trim().isURL().withMessage('Image must be a valid URL')
 ];
 
-gameRouter.post('/new', authMiddleware, validateGame, (req: any, res: any) => {
+gameRouter.post('/new', checkToken, validateGame, (req: any, res: any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -20,16 +21,11 @@ gameRouter.post('/new', authMiddleware, validateGame, (req: any, res: any) => {
   GameController.createGame(req, res);
 });
 
-gameRouter.get('/all', authMiddleware, (req:any, res:any) => {
-  if (req.userRole !== 'admin') {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-  GameController.getGames(req, res);
-});
+gameRouter.get('/all', checkToken, GameController.getGames);
 
-gameRouter.get('/:id', authMiddleware, GameController.getGameById);
+gameRouter.get('/:id', checkToken, GameController.getGameById);
 
-gameRouter.put('/:id', authMiddleware, validateGame, (req: any, res: any) => {
+gameRouter.put('/:id', checkToken, validateGame, (req: any, res: any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -38,8 +34,9 @@ gameRouter.put('/:id', authMiddleware, validateGame, (req: any, res: any) => {
 }
 );
 
-gameRouter.delete('/:id', authMiddleware, GameController.deleteGame);
+gameRouter.delete('/:id', checkToken, GameController.deleteGame);
 
-gameRouter.use('/:gameId', characterRoutes)
+gameRouter.use('/:gameId/characters', characterRoutes)
+gameRouter.use('/:gameId/topics', topicRoutes)
 
 export default gameRouter;

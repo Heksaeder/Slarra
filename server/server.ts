@@ -1,9 +1,11 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { db } from './config/db.config';
-import userRouter from './src/user.route';
-import gameRouter from './src/game.route';
-import charRouter from './src/character.route';
+import userRouter from './src/users/user.route';
+import gameRouter from './src/games/game.route';
+import charRouter from './src/characters/character.route';
+import topicRouter from './src/topics/topic.route';
+import messageRouter from './src/messages/message.route';
 
 const app = express();
 
@@ -16,7 +18,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-
 app.use(cors());
 
 app.use(express.json());
@@ -25,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/users', userRouter);
 app.use('/games', gameRouter);
 app.use('/characters', charRouter);
+app.use('/topics', topicRouter);
+app.use('/posts', messageRouter);
 
 db.then(() => {
   app.listen(PORT, () => {

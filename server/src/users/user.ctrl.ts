@@ -50,8 +50,12 @@ class userController {
   }
 
   getUsers = async (req: Request, res: Response) => {
-    const users = await UserServices.getUsers();
-    return res.status(200).send(users);
+    try {
+      const users = await UserServices.getUsers();
+      return res.status(200).send(users);
+    } catch (err) {
+      return res.status(500);
+    }
   }
 
   getUserById = async (req: Request, res: Response) => {
@@ -82,7 +86,11 @@ class userController {
       return res.status(500);
     }
   }
-  
+ 
+  logoutUser = async (req: Request, res: Response) => {
+    res.clearCookie('token');
+    return res.status(200).send('Logged out');
+  }
 }
 
 export const UserController = new userController();

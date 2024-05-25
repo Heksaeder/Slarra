@@ -2,12 +2,11 @@ import { User, IUser } from './user.model';
 import e, { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import {generateToken, setToken} from '../utils/auth.middleware';
 
 const REGEX_EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const REGEX_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const SALT_ROUNDS = 10;
-
-const SECRET_KEY = 'sl4rr4'
 
 export class userService {
   async loginUser(req: Request, res: Response) {
@@ -19,17 +18,12 @@ export class userService {
 
       const match = await bcrypt.compare(req.body.password, user.password);
       if (!match) {
-        console.log('Compare both passwords', req.body.password, user.password);
         throw new Error('Incorrect password');
       }
 
-      const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, {expiresIn: '1h'});
-
-      res.cookie('token', token, { 
-        httpOnly: true, 
-        secure: true,
-        maxAge: 1000 * 60 * 60 // 1 hour
-      });
+      const payload = { id: user._id, role: user.role };
+      const token = generateToken(payload); // 15 minutes
+      setToken(res, token)
       
       return {token, user};
     } catch (err) {
@@ -80,7 +74,9 @@ export class userService {
 
   async getUsers() {
     try {
-      return await User.find();
+      const users = await User.find();
+      console.log('users', users)
+      return users;
     }
     catch (err) {
       console.error(err);
@@ -89,7 +85,11 @@ export class userService {
 
   async getUserById(id: string) {
     try {
-      return await User.findById(id);
+      const user = await User.findById(id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
     }
     catch (err) {
       console.error(err);
@@ -98,10 +98,11 @@ export class userService {
 
   async updateUser(id:string, updatedData: Partial<IUser>) {
     try {
-      // Hash the password before saving
+      // Delete password from updatedData
       if (updatedData.password) {
-        updatedData.password = await bcrypt.hash(updatedData.password, SALT_ROUNDS);
+        delete updatedData.password;
       }
+      
       const user = await User.findByIdAndUpdate(id, updatedData, { new: true });
       if (!user) {
         throw new Error('User not found');

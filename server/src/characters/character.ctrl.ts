@@ -50,8 +50,12 @@ class characterController {
   // Get all characters for a specific game created by the logged-in user
   getCharactersByGame = async (req: Request, res: Response) => {
     try {
-      const { gameId } = req.params;
+      let { gameId } = req.params;
+      if (!gameId) {
+        gameId = req.query.gameId as string;
+      }
       const userId = req.userId; // Assuming userId is added by authMiddleware
+      console.log('userId:', userId)
       const characters = await CharacterServices.getCharactersByGame(gameId as string, userId as string);
       res.status(200).json(characters);
     } catch (error) {

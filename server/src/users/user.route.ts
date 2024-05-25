@@ -2,7 +2,8 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 
 import { UserController } from './user.ctrl';
-import authMiddleware from './auth.middleware';
+import { checkToken, adminMiddleware } from '../utils/auth.middleware';
+
 const userRouter = express.Router();
 
 const validateUser = [
@@ -33,12 +34,12 @@ userRouter.post('/login', loginValidation, (req:any, res:any) => {
   UserController.loginUser(req, res);
 });
 
-userRouter.get('/:id', authMiddleware, UserController.getUserById);
+userRouter.get('/all', checkToken, adminMiddleware, UserController.getUsers);
 
-userRouter.get('/', authMiddleware, UserController.getUsers);
+userRouter.get('/:id', checkToken, UserController.getUserById);
 
 // Update user
-userRouter.put('/:id', authMiddleware, validateUser, (req:any, res:any) => {
+userRouter.put('/:id', checkToken, validateUser, (req:any, res:any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -47,6 +48,7 @@ userRouter.put('/:id', authMiddleware, validateUser, (req:any, res:any) => {
 });
 
 // DELETE /users/:id
-userRouter.delete('/:id', authMiddleware, UserController.deleteUser);
+userRouter.delete('/:id', checkToken, UserController.deleteUser);
 
+userRouter.post('/logout', UserController.logoutUser);
 export default userRouter;
