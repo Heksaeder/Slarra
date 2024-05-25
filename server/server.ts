@@ -29,10 +29,15 @@ app.use('/characters', charRouter);
 app.use('/topics', topicRouter);
 app.use('/posts', messageRouter);
 
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello World');
+});
+
 db.then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
+  
 }).catch((err) => {
   console.error(err);
 });
