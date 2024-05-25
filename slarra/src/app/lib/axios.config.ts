@@ -11,6 +11,7 @@ const axiosConfig = axios.create({
   baseURL: 'https://slarra.vercel.app', // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': 'https://slarra.vercel.app', // Replace with your frontend URL
     common: {
       'Authorization': `Bearer ${getToken()}` // Include the token in the Authorization header
     }

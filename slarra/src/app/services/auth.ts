@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 
 export const login = async (loginData: any) => {
-  const response = await axiosConfig.post('/users/login', loginData);
+  const response = await axiosConfig.post('https://slarra.vercel.app/users/login', loginData);
   const { token } = response.data;
   // Set the token in an HTTP-only cookie
   Cookies.set('token', token, { 

@@ -12,7 +12,7 @@ export const useFetchUsers = () => {
 /* LOGIN */
 export const useLoginMutation = () => {
   return useMutation(
-    (loginData: any) => axiosConfig.post('/users/login', loginData),
+    (loginData: any) => axiosConfig.post('https://slarra.vercel.app/users/login', loginData),
     {
       onSuccess: (data: any) => {
         // Extract token from response
