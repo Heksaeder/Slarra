@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="fr">
       <body className={inter.className}>
       <ReactQueryProvider>
-          <Header />
+        <Header />
           {children}
         </ReactQueryProvider>
       </body>

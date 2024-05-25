@@ -26,7 +26,7 @@ export const useCreateCharacterMutation = () => {
 
 export const useCharactersByGame = (gameId: string) => {
   return useQuery(['characters', gameId], async () => {
-    const res = await axiosConfig.get(`/games/${gameId}/all`);
+    const res = await axiosConfig.get(`/games/${gameId}/characters/all`);
     return res.data;
   });
 }
@@ -52,4 +52,20 @@ export const useUpdateCharacterMutation = () => {
       }
     }
   );
-  } 
+} 
+
+export const useDeleteCharacterMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (charId: string) => axiosConfig.delete(`/characters/${charId}`), // Send DELETE request to delete character
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('characters'); // Invalidate characters query after mutation
+      },
+      onError: (error: any) => {
+        console.error('Delete character error:', error.message);
+      }
+    }
+  );
+}

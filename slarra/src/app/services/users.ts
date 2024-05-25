@@ -2,9 +2,11 @@ import { useQuery, useMutation } from 'react-query';
 import axiosConfig from '../lib/axios.config';
 import Cookies from 'js-cookie';
 
-const fetchUsers = async () => {
-  const res = await axiosConfig.get('/users');
-  return res.data;
+export const useFetchUsers = () => {
+  return useQuery('users', async () => {
+    const response = await axiosConfig.get('/users/all');
+    return response.data;
+  });
 }
 
 /* LOGIN */
@@ -41,6 +43,7 @@ export const useRegisterMutation = () => {
 export const useFetchUserQuery = (userId: string) => {
   return useQuery(['user', userId], async () => {
     const response = await axiosConfig.get(`/users/${userId}`);
+    console.log('User data:', response.data)
     const userData = response.data;
     const newData = {...userData, id: userData._id};
     return newData;
@@ -70,6 +73,21 @@ export const useDeleteMutation = () => {
       },
       onError: (error: any) => {
         console.error('Delete user error:', error.message)
+      }
+    }
+  )
+}
+
+export const useLogoutMutation = () => {
+  return useMutation(
+    () => axiosConfig.post('/users/logout'),
+    {
+      onSuccess: (data: any) => {
+        Cookies.remove('token');
+        console.log('Logout success:', data)
+      },
+      onError: (error: any) => {
+        console.error('Logout error:', error.message)
       }
     }
   )
