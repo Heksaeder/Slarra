@@ -2,22 +2,18 @@
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useLogoutMutation } from '@/app/services/users';
 import { FaHome, FaRegUserCircle, FaGamepad, FaSignOutAlt, FaUserCog } from "react-icons/fa";
-
 
 const Header = () => {
   const routes = usePathname();
   const logoutMutation = useLogoutMutation();
   const [links, setLinks] = useState([
     { href: '/', icon: FaHome, label: 'Home' },
-    { href: '/profile', icon:FaRegUserCircle, label: 'Profile' },
-    { href: '/games', icon:FaGamepad, label: 'Games' },
+    { href: '/profile', icon: FaRegUserCircle, label: 'Profile' },
+    { href: '/games', icon: FaGamepad, label: 'Games' },
   ]);
-
-  const isLoginRoute = routes === '/login';
-  if (isLoginRoute) return null;
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -45,25 +41,27 @@ const Header = () => {
     logoutMutation.mutate();
   };
 
+  const isLoginRoute = routes === '/login';
+
   return (
     <header>
-      <nav>
-        <a href="/">
-          Slarra
-        </a>
-        <ul>
-          {links.map(({ href, icon:Icon }) => (
-            <li key={href}>
-              <a href={href}>
-                <Icon />
-              </a>
-            </li>
-          ))}
-        </ul>
-        <a href="/login">
-          <FaSignOutAlt onClick={handleLogout}/>
-        </a>
-      </nav>
+      {!isLoginRoute && (
+        <nav>
+          <a href="/">Slarra</a>
+          <ul>
+            {links.map(({ href, icon: Icon }) => (
+              <li key={href}>
+                <a href={href}>
+                  <Icon />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="/login">
+            <FaSignOutAlt onClick={handleLogout} />
+          </a>
+        </nav>
+      )}
     </header>
   );
 };
