@@ -8,7 +8,7 @@ const getToken = () => {
 };
 
 const axiosConfig = axios.create({
-  baseURL: 'https://slarra-heksaeder-heksaeders-projects.vercel.app', // Replace with your API base URL
+  baseURL: 'https://slarra.vercel.app', // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
     common: {
