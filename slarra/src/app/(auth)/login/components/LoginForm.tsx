@@ -1,10 +1,10 @@
-import { useContext, useState } from "react";
-import { useLoginMutation } from "../../../services/users";
+// components/LoginForm.tsx
+import { useState } from "react";
+import { useLoginMutation } from "@/app/services/users";
+import '../styles.css'
 
 const LoginForm = () => {
-
   const [formData, setFormData] = useState({ email: '', password: '' });
-
   const loginMutation = useLoginMutation();
 
   const handleChange = (e: any) => {
@@ -15,7 +15,7 @@ const LoginForm = () => {
     }))
   }
 
-  const handleSubmit = (e: any) => {;
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     loginMutation.mutate(formData, {
       onSuccess: () => {
@@ -28,14 +28,51 @@ const LoginForm = () => {
   }
 
   return (
-    <form method="POST" onSubmit={handleSubmit}>
-      <input type="email" name="email" value={formData.email} placeholder="Email" onChange={handleChange} /><br />
-      <input type="password" name="password" value={formData.password} placeholder="Password" onChange={handleChange} autoComplete="current-password" /><br />
-      <button type="submit" disabled={loginMutation.isLoading}>
-        {loginMutation.isLoading ? 'Logging in...' : 'Login'}
-      </button>
+    <form method="POST" onSubmit={handleSubmit} className="mb-4 rounded-lg shadow-lg">
+      <div className="mb-4">
+        <label className="form-label block text-white text-sm mb-2 lowercase" htmlFor="email">
+          Email
+        </label>
+        <input
+          className="form-input"
+          id="email"
+          type="email"
+          name="email"
+          value={formData.email}
+          placeholder="Email"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mb-6">
+        <label className="form-label block text-white text-sm mb-2 lowercase" htmlFor="password">
+          Password
+        </label>
+        <input
+          className="form-input"
+          id="password"
+          type="password"
+          name="password"
+          value={formData.password}
+          placeholder="Password"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <button
+          type="submit"
+          disabled={loginMutation.isLoading}
+          className="create-btn lowercase text-sm m-0 p-0 bg-yellow-700 hover:bg-yellow-900"
+        >
+          {loginMutation.isLoading ? 'Logging in...' : 'Login'}
+        </button>
+        {loginMutation.isError && 
+          <div className="text-red-500 text-sm">
+            {loginMutation.error?.response?.data.message}
+            </div>
+            }
+      </div>
     </form>
-  )
+  );
 }
 
 export default LoginForm;
