@@ -2,117 +2,145 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(32, 32, 32) rgba(0, 0, 0, 0.1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 /* FORMS */
 body {
   background-color: #101010;
-  color:white;
-}
-
-nav ul {
-  display: flex;
-  justify-content: space-around;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li a {
   color: white;
-  text-decoration: none;
 }
 
-nav ul li a:hover {
-  color: #3182ce;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size:60px;
-}
-
-input {
-  background-color: black;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.25rem;
-  color: #7b7b7b;
-  display: block;
-  padding: 0.5rem 0.75rem;
-  font-size:20px;
-  margin:20px;
-}
-
-input:focus {
-  border-color: #3182ce;
-  outline: none;
-}
-
-textarea {
-  background-color: black;
-  width:100%;
-  font-size: 20px;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.25rem;
-  color: #ffffff;
-  display: block;
-  padding: 0.5rem 0.75rem;
-  margin:20px;
-}
-
-select {
-  background-color: black;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.25rem;
-  color: #7b7b7b;
-  display: block;
-  padding: 0.5rem 0.75rem;
-  font-size:20px;
-  margin:20px;
-
-}
-
-header {
-  background-color: #000000;
-  color: white;
-  padding:0.4rem;
-  text-align: center;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-header nav ul {
-  display: flex;
-  justify-content:  end;
-  gap:0.4rem;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+/* globals.css */
+body.no-scroll {
+  overflow: hidden;
 }
 
 .modal {
   clip-path: polygon(20% 0, 100% 0%, 100% 100%, 0% 100%);
-        background-color: #101010;
-        color:white;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        place-items: center;
-        justify-content: center;
-        position:absolute;
-        z-index:50;
-        right:0;
-        height:100vh;
-        width:50vw;
+  background-color: #101010;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 50;
+  right: 0;
+  height: 100vh;
+  width: 50vw;
 }
 
 .overlay-modal {
   position: fixed;
-  z-index:50;
+  z-index: 50;
   inset: 0px;
-  background-color: rgba(10,10,10,0.8);
+  background-color: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(8px);
+}
+
+.menu-link {
+  @apply font-thin text-left;
+  line-height: 70%;
+  letter-spacing: -2px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.form-modal {
+  @apply lg:w-[50dvw] lg:max-h-[80vh] lg:overflow-y-auto;
+}
+
+.form-button {
+  cursor: pointer;
+  background-color: rgb(135, 106, 35);
+  padding: 0.5rem 1rem;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  width: 100%;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.form-button:hover {
+  background-color: rgb(96, 75, 21);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.form-input {
+  @apply w-full bg-black;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(10, 10, 10);
+  border-radius: 50px;
+  margin: 0rem 0;
+  font-size: medium;
+}
+
+.form-input:focus {
+  @apply bg-black;
+}
+
+.form-input::placeholder {
+  color: gray;
+}
+
+.form-textarea {
+  @apply w-full bg-black lg:min-h-[10rem] lg:max-h-[50rem];
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  margin: 0rem 0;
+  font-size: medium;
+}
+
+.app-title {
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: -4px;
+}
+
+.form-label {
+  @apply block text-white text-sm mb-2 lowercase;
+  letter-spacing: 2px;
+}
+
+.create-btn {
+  @apply w-full;
+  text-align: center;
+  letter-spacing: 2px;
+  padding: 0.5rem 1rem;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.create-btn:hover {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+  @apply p-4 text-center mb-5 text-4xl font-extrabold uppercase shadow-black;
+}
+
+h2 {
+  @apply bg-[#080808] font-extrabold uppercase text-2xl text-white p-2 text-center;
+}
+
+h3 {
+  @apply font-normal uppercase text-sm text-white p-2 text-center;
 }

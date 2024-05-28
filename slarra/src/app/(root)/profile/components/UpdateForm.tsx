@@ -13,7 +13,7 @@ interface UpdateFormProps {
 }
 
 const UpdateForm: React.FC<UpdateFormProps> = ({ userData, onSubmit }) => {
-  const [updatedUserData, setUpdatedUserData] = useState(userData);
+  const [updatedUserData, setUpdatedUserData] = useState({ ...userData });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -29,38 +29,43 @@ const UpdateForm: React.FC<UpdateFormProps> = ({ userData, onSubmit }) => {
     onSubmit(updatedUserData);
   };
 
+  console.log(userData);
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="name">Name:</label>
+    <form className="form-modal p-4 rounded-lg shadow-lg" onSubmit={handleSubmit}>
+      <div className="my-4">
+        <label className="form-label" htmlFor="name">Name:</label>
         <input
           type="text"
           id="name"
           name="name"
           value={updatedUserData.name}
           onChange={handleChange}
+          className="form-input"
         />
       </div>
-      <div>
-        <label htmlFor="email">Email:</label>
+      <div className="my-4">
+        <label className="form-label" htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
           name="email"
           value={updatedUserData.email}
           onChange={handleChange}
+          className="form-input"
         />
       </div>
-      <div>
-        <label htmlFor="bio">Bio:</label>
+      <div className="my-4">
+        <label className="form-label" htmlFor="bio">Bio:</label>
         <textarea
           id="bio"
           name="bio"
           value={updatedUserData.bio}
           onChange={handleChange}
+          className="form-textarea"
         />
       </div>
-      <button type="submit">Update</button>
+      <button className="create-btn bg-[#276969] active:bg-[#1a3729] " type="submit">Update</button>
     </form>
   );
 };

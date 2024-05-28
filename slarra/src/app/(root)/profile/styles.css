@@ -1,0 +1,15 @@
+h1 {
+  @apply text-center mb-5 ;
+}
+
+h2 {
+  @apply bg-[#080808] font-extrabold uppercase text-2xl text-white p-2 text-center;
+}
+
+h3 {
+  @apply font-normal uppercase text-sm text-white p-2 text-center;
+}
+
+.form-textarea {
+  @apply w-full p-2 bg-black text-white h-40 rounded-2xl;
+}

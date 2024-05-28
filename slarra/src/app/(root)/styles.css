@@ -1,0 +1,3 @@
+.list-item {
+  @apply flex flex-col justify-center items-center h-16 bg-black my-4 rounded-full text-center hover:font-bold hover:text-lg transition-all duration-300;
+}
