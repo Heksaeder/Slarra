@@ -25,14 +25,12 @@ export const useCreateMessageMutation = () => {
   );
 }
 
-export const useMessagesByTopic = (topicId: string, page: number, pageSize: number) => {
-  return useQuery(['messages', topicId, page, pageSize], async () => {
+export const useMessagesByTopic = (topicId: string) => {
+  return useQuery(['messages', topicId], async () => {
     console.log('topicId mutation:', topicId)
     const res = await axiosConfig.get('/topics/${topicId}/posts/all', {
       params: {
-        topicId,
-        page,
-        pageSize
+        topicId
       }});
     return res.data;
   },

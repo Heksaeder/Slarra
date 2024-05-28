@@ -8,10 +8,10 @@ const getToken = () => {
 };
 
 const axiosConfig = axios.create({
-  baseURL: 'https://slarra.vercel.app', // Replace with your API base URL
+  baseURL: 'http://localhost:8001', // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': 'https://slarra.vercel.app', // Replace with your frontend URL
+    'Access-Control-Allow-Origin': 'http://localhost:8001', // Replace with your frontend URL
     common: {
       'Authorization': `Bearer ${getToken()}` // Include the token in the Authorization header
     }

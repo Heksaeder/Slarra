@@ -2,6 +2,7 @@ import { useQuery, useMutation } from 'react-query';
 import axiosConfig from '../lib/axios.config';
 import Cookies from 'js-cookie';
 
+// Fetch all users
 export const useFetchUsers = () => {
   return useQuery('users', async () => {
     const response = await axiosConfig.get('/users/all');
@@ -9,86 +10,110 @@ export const useFetchUsers = () => {
   });
 }
 
-/* LOGIN */
+// Login mutation
 export const useLoginMutation = () => {
   return useMutation(
-    (loginData: any) => axiosConfig.post('https://slarra.vercel.app/users/login', loginData),
+    async (loginData) => {
+      const response = await axiosConfig.post('/users/login', loginData);
+      return response.data;
+    },
     {
-      onSuccess: (data: any) => {
-        // Extract token from response
-        const token = data.data.token;
-        // Store token in local storage
+      onSuccess: (data) => {
+        const token = data.token;
         Cookies.set('token', token);
-        console.log('Login success:', data.data.token)
+        console.log('Login success:', token);
       },
-      onError: (error: any) => {
-        console.error('Login error:', error.message)
+      onError: (error:Error) => {
+        console.error('Login error:', error.message);
       }
     }
-  )
+  );
 }
 
-/* REGISTER */
+// Register mutation
 export const useRegisterMutation = () => {
   return useMutation(
-    (userData: any) => axiosConfig.post('/users/new', userData),
+    async (userData) => {
+      const response = await axiosConfig.post('/users/new', userData);
+      return response.data;
+    },
     {
-      onError: (error: any) => {
-        console.error('Create user error:', error.message)
+      onError: (error:Error) => {
+        console.error('Create user error:', error.message);
       }
     }
-  )
+  );
 }
 
-export const useFetchUserQuery = (userId: string) => {
+// Fetch user by ID
+export const useFetchUserQuery = (userId:string) => {
   return useQuery(['user', userId], async () => {
+    console.log('Fetching user:', userId);
     const response = await axiosConfig.get(`/users/${userId}`);
     console.log('User data:', response.data)
-    const userData = response.data;
-    const newData = {...userData, id: userData._id};
-    return newData;
+    return response.data;
+  }, {
+    enabled: !!userId, // Only run query if userId is provided
+    onError: (error:Error) => {
+      console.error('Fetch user error:', error.message);
+    },
   });
 };
 
+// Update user mutation
 export const useUpdateMutation = () => {
   return useMutation(
-    (userData: {id: string; name: string; email:string; bio:string}) => axiosConfig.put(`/users/${userData.id}`, userData),
+    async (userData: {id: string; name: string; email:string; bio:string}) => {
+      if (!userData.id) {
+        throw new Error('User ID is missing');
+      }
+      const response = await axiosConfig.put(`/users/${userData.id}`, userData);
+      return response.data;
+    },
     {
-      onSuccess: (data: any) => {
-        console.log('Update user success:', data)
+      onSuccess: (data) => {
+        console.log('Update user success:', data);
       },
-      onError: (error: any) => {
-        console.error('Update user error:', error.message)
+      onError: (error:Error) => {
+        console.error('Update user error:', error.message);
       }
     }
-  )
+  );
 }
 
+// Delete user mutation
 export const useDeleteMutation = () => {
   return useMutation(
-    (userId: string) => axiosConfig.delete(`/users/${userId}`),
+    async (userId) => {
+      const response = await axiosConfig.delete(`/users/${userId}`);
+      return response.data;
+    },
     {
-      onSuccess: (data: any) => {
-        console.log('Delete user success:', data)
+      onSuccess: (data) => {
+        console.log('Delete user success:', data);
       },
-      onError: (error: any) => {
-        console.error('Delete user error:', error.message)
+      onError: (error:Error) => {
+        console.error('Delete user error:', error.message);
       }
     }
-  )
+  );
 }
 
+// Logout mutation
 export const useLogoutMutation = () => {
   return useMutation(
-    () => axiosConfig.post('/users/logout'),
+    async () => {
+      const response = await axiosConfig.post('/users/logout');
+      return response.data;
+    },
     {
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         Cookies.remove('token');
-        console.log('Logout success:', data)
+        console.log('Logout success:', data);
       },
-      onError: (error: any) => {
-        console.error('Logout error:', error.message)
+      onError: (error:Error) => {
+        console.error('Logout error:', error.message);
       }
     }
-  )
+  );
 }
