@@ -1,48 +1,79 @@
-.game-box {
-  border:rgb(52, 52, 52) 1px solid;
-  padding:16px;
-  text-align: center;
-  width:calc(100vw/3 - 32px);
-  height:calc(100vh/2 - 32px);
-}
-
-.game-box img {
-  max-width: 100%;
-  height: auto;
-}
-
-.game-box .img-box {
-  height:50%;
-  width:100%;
-  background-color:rgb(52, 52, 52);
-  background-size: cover;
-  background-position: center;
-}
-
-.game-box h3 {
-  margin-top: 8px;
-}
-
-.game-box p {
-  margin-top: 4px;
-  font-size: 12px;
-  overflow-y:auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgb(52, 52, 52) rgb(52, 52, 52);
-}
-
-.container {
-  padding: 20px;
-}
-
-.gameGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
 h1 {
-  text-align: center;
-  margin-bottom: 20px;
+  @apply text-center mb-5;
 }
 
+.fade-enter-right {
+  overflow:hidden;
+  opacity: 0;
+  transform: translateX(100%);
+}
+.fade-enter-right-active {
+  overflow:hidden;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 500ms, transform 500ms;
+}
+
+.fade-exit-right {
+  overflow:hidden;
+  opacity: 1;
+  transform: translateX(0);
+}
+.fade-exit-right-active {
+  overflow:hidden;
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 500ms, transform 500ms;
+}
+
+.fade-enter-left {
+  overflow:hidden;
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.fade-enter-left-active {
+  overflow:hidden;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 500ms, transform 500ms;
+}
+
+.fade-exit-left {
+  overflow:hidden;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-exit-left-active {
+  overflow:hidden;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 500ms, transform 500ms;
+}
+
+@keyframes expandToFullScreen {
+  from {
+    width: 100%;
+    height: 25%;
+  }
+  to {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+  }
+}
+
+.fullscreen {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  animation: expandToFullScreen 1s forwards;
+  z-index: 1000; /* Ensure it's on top of other elements */
+}
+
+.game-title {
+  @apply text-center;
+}

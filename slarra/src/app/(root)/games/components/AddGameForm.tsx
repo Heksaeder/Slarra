@@ -21,36 +21,42 @@ const AddGameForm: React.FC<AddGameFormProps> = ({ onSubmit, onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <>
+    <h2>Add Game</h2>
+    <form className='form-modal' onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="title">Title:</label>
+        <label className='form-label' htmlFor="title">Title:</label>
         <input
           type="text"
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          className='form-input'
           required
         />
       </div>
       <div>
-        <label htmlFor="image">Image URL:</label>
+        <label className='form-label' htmlFor="image">Image URL:</label>
         <input
           type="text"
           id="image"
           value={image}
           onChange={(e) => setImage(e.target.value)}
+          className='form-input'
         />
       </div>
       <div>
-        <label htmlFor="description">Description:</label>
+        <label className='form-label' htmlFor="description">Description:</label>
         <textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          className='form-textarea'
         />
       </div>
-      <button type="submit">Add Game</button>
+      <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' type="submit">Add Game</button>
     </form>
+    </>
   );
 };
 
