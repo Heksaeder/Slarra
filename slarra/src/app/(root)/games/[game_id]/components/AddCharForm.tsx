@@ -22,35 +22,39 @@ const AddCharForm: React.FC<AddCharFormProps> = ({ gameId, onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className='form-modal' onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="name">Name:</label>
+        <label className='form-label' htmlFor="name">Name:</label>
         <input
           type="text"
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          className='form-input'
           required
         />
       </div>
       <div>
-        <label htmlFor="image">Image URL:</label>
+        <label className='form-label' htmlFor="image">Image URL:</label>
         <input
           type="text"
           id="image"
           value={image}
           onChange={(e) => setImage(e.target.value)}
+          className='form-input'
+          required
         />
       </div>
       <div>
-        <label htmlFor="background">Background:</label>
+        <label className='form-label' htmlFor="background">Background:</label>
         <textarea
           id="background"
           value={background}
           onChange={(e) => setBackground(e.target.value)}
+          className='form-textarea'
         />
       </div>
-      <button type="submit">Add Character</button>
+      <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' type="submit">Add new character</button>
     </form>
   )
 }

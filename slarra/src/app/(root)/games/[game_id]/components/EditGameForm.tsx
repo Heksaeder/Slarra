@@ -32,38 +32,41 @@ const EditGameForm: React.FC<EditGameFormProps> = ({ gameData, onSubmit }) => {
   
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className='form-modal' onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="title">Title:</label>
+        <label className='form-label' htmlFor="title">Title:</label>
         <input
           type="text"
           id="title"
           name="title"
           value={updatedGame.title}
           onChange={handleChange}
+          className='form-input'
         />
       </div>
       <div>
-        <label htmlFor="image">Image URL:</label>
+        <label className='form-label' htmlFor="image">Image URL:</label>
         <input
           type="text"
           id="image"
           name="image"
           value={updatedGame.image}
           onChange={handleChange}
+          className='form-input'
         />
       </div>
       <div>
-        <label htmlFor="description">Description:</label>
+        <label className='form-label' htmlFor="description">Description:</label>
         <textarea
           id="description"
           name="description"
           value={updatedGame.description}
           onChange={handleChange}
+          className='form-textarea'
         />
       </div>
-      <button type="submit">
-        Update Game
+      <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' type="submit">
+        Edit
       </button>
     </form>
   );
