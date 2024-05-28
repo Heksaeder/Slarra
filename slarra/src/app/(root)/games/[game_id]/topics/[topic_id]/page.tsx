@@ -15,7 +15,7 @@ const Topic = () => {
     }
   }, [])
 
-  const {data: messages, isLoading: messagesLoading, isError: messagesError} = useMessagesByTopic(topicId, 1, 10);
+  const {data: messages, isLoading: messagesLoading, isError: messagesError} = useMessagesByTopic(topicId);
   console.log('messages:', messages)
 
   if (messagesLoading) return <div> </div>; // Show loading state

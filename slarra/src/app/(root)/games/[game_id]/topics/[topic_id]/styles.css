@@ -6,3 +6,32 @@
   background-size: 250%;
   background-position: 50% 50%;
 }
+
+h1 {
+  @apply text-white text-4xl font-extrabold uppercase text-center;
+  text-shadow: 2px 2px 0px black;
+}
+
+.edit-btn {
+  @apply bg-yellow-800 hover:bg-yellow-950 text-white font-bold rounded;
+}
+
+.delete-btn {
+  @apply bg-red-800 hover:bg-red-950 text-white font-bold rounded;
+}
+
+.classic-btn {
+  @apply text-white font-bold rounded;
+
+}
+.post-btn {
+  @apply bg-green-800 hover:bg-green-950 text-white font-bold rounded;
+}
+
+.first-post-btn {
+  @apply bg-green-800 hover:bg-green-950 text-white font-bold rounded p-10;
+}
+
+.topic-desc {
+  @apply bg-[#080808] text-sm italic mt-20 p-6 md:w-[90dvw] md:rounded-lg;
+}

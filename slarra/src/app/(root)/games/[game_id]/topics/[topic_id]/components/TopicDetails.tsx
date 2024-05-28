@@ -4,19 +4,33 @@ import { useTopicById, useUpdateTopicMutation } from '@/app/services/topics'
 import { useCreateMessageMutation, useMessagesByTopic, useUpdateMessageMutation, useDeleteMessageMutation } from '@/app/services/messages'
 import { useCharacter, useCharactersByGame } from '@/app/services/characters' // Adjust the import path
 import { useFetchUserQuery } from '@/app/services/users'
+import { getUserRole, getUserIdFromToken } from '@/app/services/auth'
 
 import { sanitizeInput } from '@/app/lib/purify'
 
 import he from 'he'
 import Modal from 'react-modal'
+import { IoIosArrowBack, IoIosArrowForward, IoIosArrowUp, IoIosBrush, IoIosClose } from 'react-icons/io'
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
 const TopicDetails = () => {
+
+  const userId = getUserIdFromToken();
+  const userRole = getUserRole();
+  
   const [topicId, setTopicId] = useState('')
   const [gameId, setGameId] = useState('')
+
+  
+  const [isListVisible, setIsListVisible] = useState(true);
+
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isEditTopicModal, setIsEditTopicModal] = useState(false);
+  const [isBodyDisplayed, setIsBodyDisplayed] = useState(false);
+
+
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10; // Number of messages per page
+  const postsPerPage = 10;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -28,74 +42,147 @@ const TopicDetails = () => {
   }, [])
 
   const { data: topic, isLoading: topicLoading, isError: topicError } = useTopicById(topicId);
-  const { data: messages, isLoading: messagesLoading, isError: messagesError } = useMessagesByTopic(topicId, currentPage, pageSize);
+  const { data: messages, isLoading: messagesLoading, isError: messagesError } = useMessagesByTopic(topicId);
   const { data: characters, isLoading: charactersLoading, isError: charactersError } = useCharactersByGame(gameId);
-  
+
   const updateTopicMutation = useUpdateTopicMutation();
-  
-  const handleEditTopic = async (updatedTopicData: { id: string, title: string, body: string, userId:string, gameId:string }) => {
+
+  const handleEditTopic = async (updatedTopicData: { id: string, title: string, body: string, userId: string, gameId: string }) => {
     try {
-      console.log('Updating topic data:', updatedTopicData);
       await updateTopicMutation.mutateAsync(updatedTopicData);
-      console.log('Topic data updated successfully');
     } catch (error: any) {
-      console.error('Error updating topic data:', error.message);
     }
   };
 
-  // Pagination functions
-  const nextPage = () => {
-    setCurrentPage(currentPage + 1);
-  };
-
-  const prevPage = () => {
-    setCurrentPage(currentPage - 1);
-  };
-
-  if (topicLoading) return '';
+  if (topicLoading || messagesLoading || charactersLoading) return '<img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="loading" />'; // Show loading state
   if (topicError) return '';
-  if (messagesLoading) return '';
   if (messagesError) return '';
-  if (charactersLoading) return '';
   if (charactersError) return '';
+
+
+  // Calculate total pages
+  const totalPages = Math.ceil(messages.length / postsPerPage);
+
+  // Get topics for current page
+  const currentPosts = messages.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
+
+  const goToTop = () => {
+    const duration = 1000; // Duration in milliseconds
+    const start = window.scrollY;
+    const startTime = 'now' in window.performance ? performance.now() : new Date().getTime();
+
+    const easeInOutQuad = (t: number) => {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    };
+
+    const scroll = () => {
+      const now = 'now' in window.performance ? performance.now() : new Date().getTime();
+      const time = Math.min(1, (now - startTime) / duration);
+      const timeFunction = easeInOutQuad(time);
+
+      window.scrollTo(0, Math.ceil(timeFunction * (0 - start) + start));
+
+      if (window.scrollY === 0) {
+        return;
+      }
+
+      requestAnimationFrame(scroll);
+    };
+
+    scroll();
+  };
+
+  // Pagination functions
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      goToTop();
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      goToTop();
+    }
+  };
+
+
+  const toggleListVisibility = () => {
+    setTimeout(() => {
+      setIsListVisible(!isListVisible);
+    }, 100);
+  };
+
+  const decodedBody = he.decode(topic.body)
 
   return (
     <div>
       {topic && (
-        <div className='flex flex-col h-screen w-[90vw] place-center m-auto'>
-          <h1 className='pb-0 mb-0 bg-transparent'>{topic.title}</h1>
-          <p className='bg-transparent text-sm italic'>{topic.body}</p>
-            
-            {/* Edit topic modal */}
-            <button onClick={() => setIsEditTopicModal(true)}>Edit Topic</button>
-            <Modal
-              isOpen={isEditTopicModal}
-              onRequestClose={() => setIsEditTopicModal(false)}
-              overlayClassName={'overlay-modal'}
-              contentLabel="Edit Topic"
-              className="modal"
-            >
-              <EditTopic topicData={topic} onSubmit={handleEditTopic} onClose={() => setIsEditTopicModal(false)} />
-            </Modal>
-          {messages.map((message: any) => (
-            <MessageWithCharacter key={message._id} message={message} />
-          ))}
+        <div className='flex flex-col h-full w-screen lg:w-full'>
+          {(userRole == 'admin' || userId === topic.userId) && (
+          <button className="text-2xl fixed right-0 top-0 m-6 z-20" onClick={() => setIsEditTopicModal(true)}><IoIosBrush /></button>
+          )}
+          <h1 onClick={toggleListVisibility} className='cursor-pointer bg-[#080808] p-4 fixed w-screen z-10' style={{ boxShadow: '0px 5px 5px #101010' }}>{topic.title} </h1>
+          <div
+          className={`${isListVisible ? 'max-h-full opacity-100' : 'max-h-0 opacity-0'
+            } transition-all duration-500 ease-in-out overflow-hidde flex flex-row justify-center`}
+        ><p className='topic-desc' dangerouslySetInnerHTML={{__html:decodedBody}}></p></div>
 
-          {/* Pagination controls */}
-          <div>
-            <button onClick={prevPage}>Previous</button>
-            <span>Page {currentPage}</span>
-            <button onClick={nextPage}>Next</button>
+          {/* Edit topic modal */}
+          <Modal
+            isOpen={isEditTopicModal}
+            onRequestClose={() => setIsEditTopicModal(false)}
+            overlayClassName={'overlay-modal flex items-center justify-center'}
+            contentLabel="Edit Topic"
+            className="p-4 md:modal"
+          >
+            <EditTopic topicData={topic} onSubmit={handleEditTopic} onClose={() => setIsEditTopicModal(false)} />
+          </Modal>
+          <div className='flex flex-row justify-center'>
+            <div className='my-16 lg:w-[90dvw] xl:w-[80dvw]'>
+            {currentPosts.map((message: any) => (
+              <MessageWithCharacter key={message._id} message={message} />
+            ))}
+          </div>
           </div>
 
-          {/* Post new message modal */}
-          <button onClick={() => setIsOpenModal(true)}>Post New Message</button>
+          <div id="PAGINATION" className="fixed z-20 bottom-0 w-full flex justify-between items-center p-4 bg-[#080808]"> {/* Adjusted to be fixed */}
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className=" text-white rounded disabled:opacity-0"
+            >
+              <IoIosArrowBack />
+            </button>{/*<span className="text-white">
+            Page {currentPage} of {totalPages}
+        </span>*/}
+            <button className='go-to-top' onClick={goToTop}>
+              <IoIosArrowUp />
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className=" text-white rounded disabled:opacity-0"
+            >
+              <IoIosArrowForward />
+            </button>
+            {/* Post new message modal */}
+            {(messages.length > 0)
+              ? <button className='post-btn absolute inset-x-0 bottom-0 mb-10 m-2' onClick={() => setIsOpenModal(true)}>new post</button>
+              : <div className='flex flex-col h-screen justify-center items-center'><button className='first-post-btn text-4xl' onClick={() => setIsOpenModal(true)}>first!</button>
+                <p className='h-1/4 italic text-sm pt-4'>Be a winner, post first</p></div>
+            }
+          </div>
+
+
+
           <Modal
             isOpen={isOpenModal}
             onRequestClose={() => setIsOpenModal(false)}
-            overlayClassName={'overlay-modal'}
+            overlayClassName={'overlay-modal flex items-center justify-center'}
             contentLabel="Post New Message"
-            className="modal"
+            className="p-4 md:modal"
           >
             <PostNewMessage topicId={topicId} characters={characters} onClose={() => setIsOpenModal(false)} />
           </Modal>
@@ -107,6 +194,8 @@ const TopicDetails = () => {
 }
 
 const MessageWithCharacter = ({ message }: { message: any }) => {
+  const userId = getUserIdFromToken();
+  const userRole = getUserRole();
   const { data: character, isLoading: characterLoading, isError: characterError } = useCharacter(message.characterId);
   const { data: author, isLoading: authorLoading, isError: authorError } = useFetchUserQuery(message.userId);
 
@@ -117,12 +206,10 @@ const MessageWithCharacter = ({ message }: { message: any }) => {
 
   const handleUpdatePost = async (updatedContent: string) => {
     const updatedMessage = { id: message._id, content: updatedContent, topicId: message.topicId, userId: message.userId, characterId: message.characterId }; // Create an object with content and topicId
-    console.log('Updating post:', updatedMessage);
 
     try {
       updatePostMutation.mutateAsync({ ...updatedMessage });
     } catch (error: any) {
-      console.error('Error updating post:', error.message);
     }
   };
 
@@ -133,44 +220,50 @@ const MessageWithCharacter = ({ message }: { message: any }) => {
   if (authorLoading) return '';
   if (authorError) return '';
 
-
+  const date = message.createdAt.substring(0, 10)
+  const day = date.substring(8, 10)
+  const month = date.substring(5, 7)
+  const year = date.substring(0, 4)
 
   return (
-    <div className='flex flex-row p-2'>
-      {character && (
-        <div className='profile-body'>
-          <div className='zoomed-avatar w-[200px] h-[200px] bg-cover rounded-full flex flex-col items-center justify-center shadow-lg shadow-neutral-950' style={{ backgroundImage: `url(${character.image})` }}>
-            <h6 className='text-sm font-bold' style={{ textShadow: '1px 1px 1px black' }}>{author.name} as</h6>
-            <h3 className='text-xl font-extrabold uppercase text-center' style={{ textShadow: '2px 2px 2px black' }}>{character.name}</h3>
-          </div>
+    <div className='flex flex-col lg:flex-row md:w-screen lg:w-full border-b-2 py-4 border-neutral-900'> {/*Full message */}
+      <div className='profile-body lg:m-6'>
+        <div className='zoomed-avatar lg:w-[200px] lg:h-[200px] bg-cover bg-center rounded-full flex flex-row lg:flex-col items-center justify-center shadow-lg shadow-neutral-950' style={{ backgroundImage: `url(${character.image})` }}>
+          <h4 className='text-sm font-bold' style={{ textShadow: '1px 1px 1px black' }}>{author.name} as</h4>
+          <h3 className='text-xl font-extrabold uppercase text-center' style={{ textShadow: '2px 2px 2px black' }}>{character.name}</h3>
         </div>
-      )}
-      <div className='message-body flex flex-col w-full m-4 p-4 bg-[#080808] rounded-sm shadow-black shadow-md'>
-        <p className='bg-transparent h-full text-[12px] text-justify' dangerouslySetInnerHTML={{ __html: decodedContent }}></p>
-        <div className='w-full text-right text-[9px] text-white'><button onClick={() => setIsOpenModal(true)}>
-          edit
-        </button>
-          <button onClick={() => setIsDeleteModal(true)}>
-          delete
-        </button> | {message.createdAt.substring(0, 10)}</div>
-        
+      </div>
+      <div className='message-body flex flex-col w-full my-4 p-4 lg:p-6 bg-[#080808] rounded-sm shadow-black shadow-md'>
+
+        <p className='bg-transparent h-full text-[16px] text-justify mb-4' dangerouslySetInnerHTML={{ __html: decodedContent }}></p>
+        <div className='w-full text-right text-xs text-white'>
+          {(userRole == 'admin' || userId === message.userId) ? 
+          <><button className='edit-btn' onClick={() => setIsOpenModal(true)}>
+            edit
+          </button>
+          <button className='delete-btn' onClick={() => setIsDeleteModal(true)}>
+            delete
+          </button> | </> : null
+          }
+          <span className='classic-btn bg-[#101010] px-4'>{day}/{month}/{year}</span></div>
+
         <Modal
           isOpen={isOpenModal}
           onRequestClose={() => setIsOpenModal(false)}
-          overlayClassName={'overlay-modal'}
+          overlayClassName={'overlay-modal flex items-center justify-center'}
           contentLabel="Edit Message"
-          className="modal"
+          className="p-4 md:modal"
         >
           <EditMessage postData={decodedContent} onSubmit={handleUpdatePost} onClose={() => setIsOpenModal(false)} />
         </Modal>
 
         {/* Delete message modal */}
-        <Modal 
+        <Modal
           isOpen={isDeleteModal}
           onRequestClose={() => setIsDeleteModal(false)}
-          overlayClassName={'overlay-modal'}
+          overlayClassName={'overlay-modal flex items-center justify-center'}
           contentLabel="Delete Message"
-          className="modal"
+          className="p-4 md:modal"
         >
           <DeleteMessage message={message} onClose={() => setIsDeleteModal(false)} />
         </Modal>
@@ -183,18 +276,17 @@ const EditMessage = ({ postData, onSubmit, onClose }: { postData: string, onSubm
   const [updatedContent, setUpdatedContent] = useState(postData);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setUpdatedContent(sanitizeInput(e.target.value));
+    setUpdatedContent(e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Submitting updated message data:', updatedContent);
     onSubmit(updatedContent);
     onClose();
   };
 
   return (
-    <form method="POST" onSubmit={handleSubmit}>
+    <form className='form-modal' method="POST" onSubmit={handleSubmit}>
       <div>
         <label htmlFor="content">Content:</label>
         <textarea
@@ -202,14 +294,15 @@ const EditMessage = ({ postData, onSubmit, onClose }: { postData: string, onSubm
           name="content"
           value={updatedContent}
           onChange={handleChange}
+          className='w-full h-48 bg-[#080808] text-white p-2 rounded-md shadow-md'
         />
       </div>
-      <button type="submit">Submit</button>
+      <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' type="submit">Edit</button>
     </form>
   );
 };
 
-const EditTopic = ({ topicData, onSubmit, onClose }: { topicData: any, onSubmit: (updatedTopicData: { id: string, title: string, body: string, userId:string, gameId: string }) => void, onClose: () => void }) => {
+const EditTopic = ({ topicData, onSubmit, onClose }: { topicData: any, onSubmit: (updatedTopicData: { id: string, title: string, body: string, userId: string, gameId: string }) => void, onClose: () => void }) => {
   const [title, setTitle] = useState(topicData.title);
   const [body, setBody] = useState(topicData.body);
 
@@ -217,34 +310,36 @@ const EditTopic = ({ topicData, onSubmit, onClose }: { topicData: any, onSubmit:
     e.preventDefault();
     const sanitizedTitle = sanitizeInput(title);
     const sanitizedBody = sanitizeInput(body);
-    const updatedTopicData = { id: topicData._id, title: sanitizedTitle, body: sanitizedBody, userId: topicData.userId, gameId: topicData.gameId};
+    const updatedTopicData = { id: topicData._id, title: sanitizedTitle, body: sanitizedBody, userId: topicData.userId, gameId: topicData.gameId };
     console.log('Submitting updated topic data:', updatedTopicData);
     onSubmit(updatedTopicData);
     onClose();
   };
 
   return (
-    <form method="POST" onSubmit={handleSubmit}>
+    <form className='form-modal' method="POST" onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="title">Title:</label>
+        <label className='form-label' htmlFor="title">Title:</label>
         <input
           type="text"
           id="title"
           name="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          className='form-input'
         />
       </div>
       <div>
-        <label htmlFor="body">Body:</label>
+        <label className='form-label' htmlFor="body">Body:</label>
         <textarea
           id="body"
           name="body"
           value={body}
           onChange={(e) => setBody(e.target.value)}
+          className='form-textarea'
         />
       </div>
-      <button type="submit">Submit</button>
+     <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' type="submit">Submit</button>
     </form>
   );
 }
@@ -277,14 +372,15 @@ const PostNewMessage = ({ topicId, characters, onClose }: { topicId: string, cha
   };
 
   return (
-    <form method="POST" onSubmit={handleSubmit}>
+    <form className='form-modal' method="POST" onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="character">Character:</label>
+        <label className='form-label' htmlFor="character">Character:</label>
         <select
           id="character"
           name="character"
           value={characterId}
           onChange={handleCharacterChange}
+          className='form-input'
         >
           <option value="">Select a character</option>
           {characters.map((char: any) => (
@@ -301,9 +397,10 @@ const PostNewMessage = ({ topicId, characters, onClose }: { topicId: string, cha
           name="content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          className='form-textarea'
         />
       </div>
-      <button type="submit">Submit</button>
+      <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' type="submit">Submit</button>
     </form>
   );
 }
@@ -323,7 +420,11 @@ const DeleteMessage = ({ message, onClose }: { message: any, onClose: () => void
 
   return (
     <div>
-      <button onClick={handleDeletePost}>Delete</button>
+      <h2>Delete Message</h2><br/>
+      <p>Are you sure you want to delete this message?<br/>
+      This action cannot be undone.</p><br/>
+      <button className='create-btn bg-red-800 hover:bg-red-950' onClick={handleDeletePost}>Delete</button><br/><br/>
+      <button className='create-btn bg-[#265c61] hover:bg-[#1a3739]' onClick={onClose}>Cancel</button>
     </div>
   );
 }
