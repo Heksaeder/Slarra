@@ -8,12 +8,11 @@ const router = express.Router({ mergeParams: true });
 
 const validateTopic = [
   body('title').trim().isLength({ min: 3 }).escape().withMessage('Title is required'),
-  body('body').trim().isLength({ min: 3 }).escape().withMessage('Body is required'),
+  body('body').trim().isLength({ max: 120 }).escape().withMessage('Body must be less than 120 characters'),
   body('gameId').trim().isMongoId().withMessage('Game ID is required')
 ];
 
 router.post('/new', checkToken, validateTopic, (req:any, res:any) => {
-  console.log('req.body:', req.body)
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });

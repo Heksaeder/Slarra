@@ -5,7 +5,6 @@ import { topicValidate } from "./topic.model";
 class topicController {
   createTopic = async (req: Request, res: Response) => {
     try {
-      console.log('req.body:', req.body)
       const { error } = topicValidate.validate({
         ...req.body,
         userId: req.userId,
@@ -32,7 +31,6 @@ class topicController {
   getTopics = async (req: Request, res: Response) => {
     try {
       const topics = await TopicServices.getTopics();
-      console.log('getTopics controller:', topics)
       res.status(200).json(topics);
     } catch (error) {
       res.status(500);
@@ -43,7 +41,6 @@ class topicController {
     try {
       const { id } = req.params;
       const topic = await TopicServices.getTopicById(id as string);
-      console.log('getTopicById controller:', topic)
       res.status(200).json(topic);
     } catch (error) {
       res.status(500);
@@ -58,7 +55,6 @@ class topicController {
         gameId = req.query.gameId as string;
       }
       const topics = await TopicServices.getTopicsByGame(gameId as string);
-      console.log('getTopicsByGame controller:', topics)
       res.status(200).json(topics);
     } catch (error) {
       console.error(error);

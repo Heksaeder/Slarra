@@ -3,8 +3,8 @@ import Joi from 'joi';
 
 export const topicValidate = Joi.object({
   title: Joi.string().max(50).required(),
-  body: Joi.string().max(500).required(),
   userId: Joi.string().required(),
+  body: Joi.string().max(12000).optional().empty(''),
   gameId: Joi.string().required()
 });
 
@@ -22,7 +22,7 @@ const topicSchema = new Schema<ITopic>({
   },
   body: {
     type: String,
-    required: true
+    default: ''
   },
   userId: {
     type: Schema.Types.ObjectId,
