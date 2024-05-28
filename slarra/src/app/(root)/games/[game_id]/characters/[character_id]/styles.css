@@ -1,0 +1,4 @@
+h1 {
+  @apply text-white text-2xl font-extrabold uppercase text-center;
+  text-shadow: 2px 2px 0px black;
+}
