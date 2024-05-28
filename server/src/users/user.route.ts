@@ -36,7 +36,8 @@ userRouter.post('/login', loginValidation, (req:any, res:any) => {
 
 userRouter.get('/all', checkToken, adminMiddleware, UserController.getUsers);
 
-userRouter.get('/:id', checkToken, UserController.getUserById);
+userRouter.get('/:id', checkToken, (req:any, res:any) => {
+  UserController.getUserById(req, res)});
 
 // Update user
 userRouter.put('/:id', checkToken, validateUser, (req:any, res:any) => {

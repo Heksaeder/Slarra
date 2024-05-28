@@ -7,15 +7,17 @@ const SECRET_KEY = process.env.JWT_SECRET || 'sl4rr4';
 // Extend the Request interface to include a userId property
 declare module 'express-serve-static-core' {
   interface Request {
-    userId?: string;
-    userRole?: string;
+    userId: string;
+    userRole: string;
   }
 }
 
 // Function to generate a JWT
 const generateToken = (payload: any) => {
-  console.log('payload:', payload)
-  return jwt.sign(payload, SECRET_KEY, { expiresIn: '15m' });
+  console.log('payload:', payload);
+  const exp = Math.floor(Date.now() / 1000) + (60 * 60); // 1h
+  const finalPayload = {...payload, exp};
+  return jwt.sign(finalPayload, SECRET_KEY);
 }
 
 const setToken = (res: Response, token: string) => {
@@ -36,31 +38,43 @@ const checkToken = (req: Request, res: Response, next: NextFunction) => {
 
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(400).json({ message: 'Invalid token.' });
+      return res.sendStatus(401);
     }
 
     req.userId = (decoded as { id: string }).id;
     req.userRole = (decoded as { role: string }).role;
-    
-    const decodedToken = decoded as { id: string, role: string, exp: number};
-    const exp = decodedToken.exp * 1000;
+
+    console.log('req.userId:', req.userId);
+    console.log('req.userRole:', req.userRole);
+
+    const decodedToken = decoded as { exp: number; role:string, id: string };
+    const expiration = decodedToken.exp * 1000;
     const now = Date.now();
-    const timeLeft = exp - now;
-    const threshold = 5 * 60 * 1000;
+    const delay = 10 * 60 * 1000;
 
-    if(timeLeft > threshold) { // token is still valid
-      return next();
-    } else if (timeLeft <= threshold && timeLeft > 0) { // token is about to expire
-      console.log('REFRESH');
-      const newToken = generateToken({ id: decodedToken.id, role: decodedToken.role});
-      console.log('newToken:', newToken);
-      setToken(res, newToken);
-      next();
-    } else {
-      return res.status(400).json({ message: 'Invalid token.' });
+    if (expiration <= now) {
+      console.log("token expired");
+      return res.status(401).json({ message: 'Token expired.' });
+    } else if ((expiration - now) <= delay) {
+      // Generate a new token with a new expiration time
+      const newToken = generateToken(decodedToken);
+      console.log("new token: " + newToken);
+
+      // Set the new token in a secure cookie
+      res.cookie('token', newToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 3600000
+      });
+
+      // Ensure that next() is called after the cookie is set and userId is attached
+      res.setHeader('Set-Cookie', 'token=' + newToken + '; HttpOnly; Secure; SameSite=Strict; Max-Age=3600');
     }
-  });
 
+    console.log("no need to refresh token");
+    next();
+  });
 }
 
 const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
