@@ -40,14 +40,14 @@ class messageController {
     }
   }
 
-  getMessagesByTopic = async (req: Request, res: Response, skip:number, limit:number) => {
+  getMessagesByTopic = async (req: Request, res: Response) => {
     try {
       let { topicId } = req.params;
       if (!topicId) {
         topicId = req.query.topicId as string;
       }
       console.log('topicId:', topicId)
-      const messages = await MessageServices.getMessagesByTopic(topicId as string, skip, limit);
+      const messages = await MessageServices.getMessagesByTopic(topicId as string);
       res.status(200).json(messages);
     } catch (error) {
       res.status(500);

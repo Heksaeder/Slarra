@@ -19,15 +19,13 @@ router.post('/new', checkToken, validateMessage, (req:any, res:any) => {
 });
 
 router.get('/all', checkToken, (req:any, res:any) => {
-  const {page = 1, limit = 10} = req.query;
-  const skip = (page - 1) * limit;
   let topicId = req.params.topicId;
   console.log('topicId (params)', topicId)
   if (!topicId) {
     topicId = req.query.topicId as string;
     console.log('topicId (query)', topicId)
   }
-  MessageController.getMessagesByTopic(req, res, skip, limit);
+  MessageController.getMessagesByTopic(req, res);
 });
 
 router.get('/:id', checkToken, MessageController.getMessageById);

@@ -22,8 +22,8 @@ export class messageService {
     return messages;
   }
 
-  async getMessagesByTopic(topicId: string, skip: number, limit: number) {
-    const messages = await Message.find({ topicId }).skip(skip).limit(limit);
+  async getMessagesByTopic(topicId: string) {
+    const messages = await Message.find({ topicId });
     return messages;
   }
 
