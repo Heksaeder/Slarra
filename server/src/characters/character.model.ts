@@ -5,7 +5,7 @@ import Joi from 'joi';
 export const characterValidate = Joi.object({
   name: Joi.string().max(50).required(),
   image: Joi.string().uri().optional(),
-  background: Joi.string().max(500).optional(),
+  background: Joi.string().max(10000).optional().empty(''),
   userId: Joi.string().required(),
   gameId: Joi.string().required()
 });

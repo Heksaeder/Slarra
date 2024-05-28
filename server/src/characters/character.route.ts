@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true});
 // Validation and sanitization middlewares
 const validateCharacter = [
   body('name').trim().isLength({ min: 3 }).escape().withMessage('Name is required'),
-  body('background').optional().trim().escape(),
+  body('background').trim().escape().optional().isLength({ max: 10000 }).withMessage('Background must be less than 10000 characters'),
   body('image').optional().trim().isURL().withMessage('Image must be a valid URL'),
   body('gameId').trim().isMongoId()
 ];

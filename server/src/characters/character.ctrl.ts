@@ -31,6 +31,7 @@ class characterController {
   getCharacters = async (req: Request, res: Response) => {
     try {
       const characters = await CharacterServices.getCharacters();
+      console.log('characters:', characters);
       res.status(200).json(characters);
     } catch (error) {
       res.status(500);
