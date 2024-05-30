@@ -13,7 +13,7 @@ export const useFetchUsers = () => {
 // Login mutation
 export const useLoginMutation = () => {
   return useMutation(
-    async (loginData) => {
+    async (loginData:{email:string, password:string}) => {
       const response = await axiosConfig.post('/users/login', loginData);
       return response.data;
     },

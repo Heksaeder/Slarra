@@ -24,12 +24,6 @@ const AdminPanel: React.FC = () => {
     }
   }, [gamesData]);
 
-  useEffect(() => {
-    if (usersError) {
-      router.push('/login');
-    }
-  }, [usersError, router]);
-
   return (
     <div>
       <h1>Admin Panel</h1>

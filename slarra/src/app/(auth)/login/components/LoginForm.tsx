@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useLoginMutation } from "@/app/services/users";
 import '../styles.css'
+import { login } from "@/app/services/auth";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -64,10 +65,10 @@ const LoginForm = () => {
           className="create-btn lowercase text-sm m-0 p-0 bg-yellow-700 hover:bg-yellow-900"
         >
           {loginMutation.isLoading ? 'Logging in...' : 'Login'}
-        </button>
+        </button><br/>
         {loginMutation.isError && 
           <div className="text-red-500 text-sm">
-            {loginMutation.error?.response?.data.message}
+            {loginMutation.error?.message}
             </div>
             }
       </div>

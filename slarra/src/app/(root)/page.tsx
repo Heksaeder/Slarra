@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { getUserRole } from '../services/auth';
 import './styles.css'
-import { SiExpress, SiFigma, SiMongodb, SiMongoose, SiNextdotjs, SiNodedotjs, SiReact, SiTailwindcss, SiTypescript } from 'react-icons/si';
+import { SiExpress, SiMongodb, SiMongoose, SiNextdotjs, SiNodedotjs, SiReact, SiTailwindcss } from 'react-icons/si';
 
 const Home = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -31,7 +31,7 @@ const Home = () => {
   return (
     <>
       <div className='w-screen h-screen flex flex-col justify-center items-center'>
-        <h1>Home</h1>
+        <h1 className='text-4xl'>SLARRA</h1>
         <div className='flex flex-row gap-x-2'>{userRole == 'admin' && (
           <a className='create-btn bg-blue-800 hover:bg-blue-950 active:bg-blue-950 my-2 transition-colors duration-300' href="/admin">Admin</a>
         )}
@@ -104,7 +104,7 @@ const Home = () => {
       <div className='w-screen h-screen flex flex-col justify-center items-center next-section'>
         <h2 className='w-full md:w-[90dvw] lg:w-[70dvw] xl:w-[40dvw] mt-16'>Backend</h2>
         <br />
-        <div className='flex flex-row gap-x-10 bg-pink-500 w-[60dvw]'>
+        <div className='flex flex-row gap-x-10 w-[60dvw]'>
           <div className='flex flex-col items-center gap-y-4 p-4 w-1/2 justify-start'>
             <h3>Configuration</h3>
             <ul className='w-full'>
@@ -117,6 +117,7 @@ const Home = () => {
           </div>
           <div className='flex flex-col items-center gap-y-4 p-4 w-1/2 justify-start'>
             <h3>Modèle</h3>
+            <img src="https://i.imgur.com/GOdfURl.png" alt="modele backend" width={400} />
           </div>
           </div>
       </div>
