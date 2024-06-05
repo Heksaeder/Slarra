@@ -95,7 +95,7 @@ const CharacterDetails = () => {
               <h2>Confirm Deletion</h2>
               <p>Are you sure you want to delete this character?<br/><br/>
               Every related post will be deleted as well.<br/><br/>
-              This action can't be undone.</p>
+              This action can&apos;t be undone.</p>
               <div>
                 <button onClick={handleDeleteChar}>Yes, Delete</button>
                 <button onClick={() => setDeleteCharModal(false)}>No, I changed my mind</button>
