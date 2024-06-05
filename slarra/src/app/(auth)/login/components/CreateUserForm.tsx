@@ -19,7 +19,7 @@ const CreateUserForm = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    createUserMutation.mutate(formData);
+    createUserMutation.mutate(formData as any);
     // Show account creation message
     alert("Your account has been created!");
   };
