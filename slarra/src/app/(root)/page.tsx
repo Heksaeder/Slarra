@@ -39,7 +39,7 @@ const Home = () => {
           <a className='create-btn bg-yellow-800 hover:bg-yellow-950 active:bg-yellow-950 my-2 transition-colors duration-300' href="/games">Games</a></div>
         <div className='flex flex-col m-6 justify-center items-center'>
           <img className='m-auto mb-10' src="https://i.ibb.co/YyDQCkX/ce-forum-jdr-slarra-bg-slarra-img1.png" alt="slarra icon" width={100} />
-          <h2 className='w-full'>Slarra, qu'est-ce que c'est ?</h2>
+          <h2 className='w-full'>Slarra, qu&apos;est-ce que c&apos;est ?</h2>
           <p className='md:w-[90dvw] lg:w-[70dvw] xl:w-[40dvw]'>
             <ul>
               <li className='list-item hover:bg-yellow-700'>Une réponse lightweight à un géant des fora</li>
@@ -83,7 +83,7 @@ const Home = () => {
             <SiTailwindcss className='text-8xl text-teal-300' /></div>
             <ul className='w-full'>
               <li className='list-item'>Framework basé sur React & Node.JS</li>
-              <li className='list-item'>S'appuie sur TypeScript (sur-ensemble de JS)</li>
+              <li className='list-item'>S&apos;appuie sur TypeScript (sur-ensemble de JS)</li>
               <li className='list-item'>Favorise le responsive et la personnalisation</li>
             </ul>
           </div>
@@ -108,8 +108,8 @@ const Home = () => {
           <div className='flex flex-col items-center gap-y-4 p-4 w-1/2 justify-start'>
             <h3>Configuration</h3>
             <ul className='w-full'>
-              <li className='list-item'>'Server.ts' → Configuration du routeur Express</li>
-              <li className='list-item'>Routes → Routes de l'API Slarra</li>
+              <li className='list-item'>Server.ts → Configuration du routeur Express</li>
+              <li className='list-item'>Routes → Routes de l&apos;API Slarra</li>
               <li className='list-item'>Controllers → Fonctions de callback</li>
               <li className='list-item'>Services → Logique métier (DB)</li>
               <li className='list-item'>Models → Schéma de données</li>
