@@ -44,7 +44,7 @@ const Home = () => {
             <ul>
               <li className='list-item hover:bg-yellow-700'>Une réponse lightweight à un géant des fora</li>
               <li className='list-item hover:bg-green-700'>Un forum orienté JDR écrit pour les amateurs</li>
-              <li className='list-item hover:bg-purple-700'>Une plateforme moins contraignante qu'un MMORPG</li>
+              <li className='list-item hover:bg-purple-700'>Une plateforme moins contraignante qu&apos;un MMORPG</li>
               <li className='list-item hover:bg-blue-700'>Un projet personnel pour se former en fullstack</li>
             </ul>
           </p>
