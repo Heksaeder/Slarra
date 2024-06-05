@@ -8,21 +8,21 @@ const getToken = () => {
 };
 
 const axiosConfig = axios.create({
-  baseURL: 'http://localhost:8001', // Replace with your API base URL
+  baseURL: 'http://localhost:8001',
   headers: {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': 'http://localhost:8001', // Replace with your frontend URL
+    'Access-Control-Allow-Origin': 'http://localhost:8001',
     common: {
-      'Authorization': `Bearer ${getToken()}` // Include the token in the Authorization header
+      'Authorization': `Bearer ${getToken()}`
     }
   },
 });
 
-// Add a request interceptor to include the token in the Authorization header
+
 axiosConfig.interceptors.request.use(
   (config) => {
-    const token = getToken() // Assuming you're storing your token in cookies
-    if (token && config.url !== '/login') { // Exclude the login route
+    const token = getToken()
+    if (token && config.url !== '/login') { 
       config.headers['Authorization'] = token;
     }
     return config;
@@ -38,7 +38,7 @@ axiosConfig.interceptors.response.use(
   },
   (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      window.location.href = '/login'; // Redirect to login page
+      window.location.href = '/login'; 
     }
     return Promise.reject(error);}
   );

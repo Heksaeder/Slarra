@@ -29,6 +29,7 @@ const GamePage = () => {
   const [isAddCharModal, setIsAddCharModal] = useState(false)
   const [isAddTopicModal, setIsAddTopicModal] = useState(false)
 
+  // For the moment, gameId from URL (SHOULD BE PASSED AS PROP/CONTEXT LATER)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const gameId = window.location.pathname.split('/')[2];
@@ -37,7 +38,7 @@ const GamePage = () => {
   }, [])
 
   const { data: game, isLoading, isError } = useFetchGameQuery(gameId);
-  const {data: userData, isLoading:userLoading, isError:userError} = useFetchUserQuery(userId as string); // Get user from context
+  const { data: userData, isLoading: userLoading, isError: userError } = useFetchUserQuery(userId as string);
 
   const updateGameMutation = useUpdateGameMutation(); // Use the mutation hook
   const deleteMutation = useDeleteGameMutation(); // Use the mutation hook
@@ -95,7 +96,7 @@ const GamePage = () => {
             <div className='flex flex-col items-center justify-center h-full bg-cover p-4 bg-center xl:h-screen xl:w-full' style={{ backgroundImage: `url(${game.image})` }}>
               <h1 className='text-4xl lg:text-6xl font-extrabold uppercase shadow-black absolute transform xl:-rotate-90 transition-transform duration-300' style={{ textShadow: '2px 2px 1px black' }}>{game.title}</h1>
               <p className='hidden lg:game-desc lg:flex'>{game.description}</p>
-              <div className='absolute bottom-0 text-right lg:text-2xl top-0 right-0 m-4 xl:bottom-0 xl:left-0'>
+              <div className="absolute bottom-0 text-right lg:text-2xl top-0 right-0 m-4 xl:bottom-0 xl:left-0">
                 <button className='p-2 rounded-full' onClick={() => setIsEditModal(true)}><IoIosBrush /></button>
                 <button className='p-2 rounded-full' onClick={() => setIsDeleteModal(true)}><IoIosBuild /></button>
               </div>
@@ -107,7 +108,7 @@ const GamePage = () => {
               {/* Add character button */}
               <button className='absolute z-40 right-0 m-3 text-2xl' onClick={() => setIsAddCharModal(true)}><IoIosAddCircleOutline /></button>
               {/* Display characters list */}
-              <CharacterList gameId={gameId}/>
+              <CharacterList gameId={gameId} />
             </div>
             <div className='xl:flex xl:flex-col xl:w-4/6'>
               {/* Add topic button */}
